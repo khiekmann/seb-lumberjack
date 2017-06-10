@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Seb the Lumberjack</string>
+    <string name="main_button_click_to_festmeter">Festmeter hinzufügen</string>
+    <string name="add_festmeter_number_d_hint">d in cm</string>
+    <string name="add_festmeter_number_l_hint">L in m</string>
+    <string name="add_festmeter_button_add">+</string>
+    <string name="add_festmeter_button_calc">calc</string>
+    <string name="add_festmeter_button_v_hint">V in fm</string>
+</resources>
