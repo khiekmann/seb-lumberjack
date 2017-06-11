@@ -7,24 +7,21 @@ package de.fnordebdarf.sebthelumberjack;
 
 class Double_ {
 
-    private Double value;
+    private final Double value;
 
-    Double_(int i) {
-        this(Double.valueOf(i));
-    }
-
-    private Double_(Double value) {
+    Double_(Double value) {
         this.value = value;
     }
 
-    private static Double valueOf(String string) {
-        return Double.valueOf(string);
+    static Double_ from(String text) {
+        Double value;
+        try {
+            value = Double.parseDouble(text);
+        } catch (Exception e) {
+            value = Double.NaN;
+        }
+        return new Double_(value);
     }
-
-    static Double_ with(String string) {
-        return new Double_(valueOf(string));
-    }
-
 
     double $(int power) {
         return Math.pow(value, power);

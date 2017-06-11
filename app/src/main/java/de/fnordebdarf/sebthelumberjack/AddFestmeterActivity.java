@@ -2,13 +2,14 @@ package de.fnordebdarf.sebthelumberjack;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.Locale;
+
+import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 
 /**
  * Created by sammann on 10.06.17.
@@ -18,21 +19,25 @@ import java.util.Locale;
 public class AddFestmeterActivity extends AppCompatActivity {
 
     private static final double pi = Math.PI;
-    private static final Double_ _10 = new Double_(10);
+    private static final Double_ _10 = new Double_(10d);
+    private final AddFestmeterListener updateFestmeter;
+
+    public AddFestmeterActivity() {
+        this.updateFestmeter = new AddFestmeterListener(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_festmeter);
-        TextView d_in_cm = (TextView) findViewById(R.id.d_in_cm);
+        addUpdateFestmeterListenerTo(R.id.d_in_cm);
+        addUpdateFestmeterListenerTo(R.id.l_in_m);
+    }
 
-        AddFestmeterListener updateFestmeter = new AddFestmeterListener(this);
-        d_in_cm.setOnFocusChangeListener(updateFestmeter);
-        d_in_cm.setOnEditorActionListener(updateFestmeter);
-
-        TextView l_in_m = (TextView) findViewById(R.id.l_in_m);
-        l_in_m.setOnFocusChangeListener(updateFestmeter);
-        l_in_m.setOnEditorActionListener(updateFestmeter);
+    private void addUpdateFestmeterListenerTo(int id) {
+        TextView textView = (TextView) findViewById(id);
+        textView.setOnFocusChangeListener(updateFestmeter);
+        textView.setOnEditorActionListener(updateFestmeter);
     }
 
     public void updateFestmeter(View view) {
@@ -45,20 +50,9 @@ public class AddFestmeterActivity extends AppCompatActivity {
     }
 
     private double calcUsingHuberscheFormula() {
-        Double_ d = Double_.with(valueOf(R.id.d_in_cm));
-        double l = asDouble(valueOf(R.id.l_in_m));
+        Double_ d = Double_.from(textOf(R.id.d_in_cm));
+        double l = Double_.from(textOf(R.id.l_in_m)).$();
         return pi/4 * d.$(2) * l * _10.$(-4);
-    }
-
-    private String valueOf(int id) {
-        return zeroIfEmptyOr(textOf(id));
-    }
-
-    private String zeroIfEmptyOr(String text) {
-        if (text.isEmpty()) {
-            text = "0";
-        }
-        return text;
     }
 
     private String textOf(int id) {
@@ -66,12 +60,12 @@ public class AddFestmeterActivity extends AppCompatActivity {
         return editText.getText().toString();
     }
 
-    private double asDouble(String string) {
-        return Double.valueOf(string);
-    }
-
-    private String localized(double aDouble) {
-        return String.format(Locale.getDefault(), "%.2f", aDouble );
+    private String localized(Double value) {
+        String localized = "";
+        if ( ! value.isNaN()) {
+            localized = String.format(Locale.getDefault(), "%.2f", value);
+        }
+        return localized;
     }
 
     private void displayFestmeter(String value) {
@@ -95,7 +89,7 @@ public class AddFestmeterActivity extends AppCompatActivity {
 
         @Override
         public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-            if(actionId == 6) {
+            if(actionId == IME_ACTION_DONE) {
                 activity.updateFestmeter();
             }
             return true;
