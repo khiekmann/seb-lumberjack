@@ -2,14 +2,11 @@ package de.fnordebdarf.sebthelumberjack;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.Locale;
-
-import static android.view.inputmethod.EditorInfo.IME_ACTION_DONE;
 
 /**
  * Created by sammann on 10.06.17.
@@ -20,6 +17,8 @@ public class AddFestmeterActivity extends AppCompatActivity {
 
     private static final double pi = Math.PI;
     private static final Double_ _10 = new Double_(10d);
+    private static final String roundedToTwoDigits = "%.2f";
+
     private final AddFestmeterListener updateFestmeter;
 
     public AddFestmeterActivity() {
@@ -44,9 +43,9 @@ public class AddFestmeterActivity extends AppCompatActivity {
         updateFestmeter();
     }
 
-    private void updateFestmeter() {
+    void updateFestmeter() {
         double festmeter = calcUsingHuberscheFormula();
-        displayFestmeter(localized(festmeter));
+        displayFestmeter(localize(festmeter, Locale.getDefault()));
     }
 
     private double calcUsingHuberscheFormula() {
@@ -60,10 +59,10 @@ public class AddFestmeterActivity extends AppCompatActivity {
         return editText.getText().toString();
     }
 
-    private String localized(Double value) {
+    private String localize(Double value, Locale toThisLocale) {
         String localized = "";
         if ( ! value.isNaN()) {
-            localized = String.format(Locale.getDefault(), "%.2f", value);
+            localized = String.format(toThisLocale, roundedToTwoDigits, value);
         }
         return localized;
     }
@@ -71,28 +70,5 @@ public class AddFestmeterActivity extends AppCompatActivity {
     private void displayFestmeter(String value) {
         TextView textView = (TextView) findViewById(R.id.v_in_festmeter);
         textView.setText(value);
-    }
-
-    private static class AddFestmeterListener implements View.OnFocusChangeListener, TextView.OnEditorActionListener {
-
-        private final AddFestmeterActivity activity;
-
-        AddFestmeterListener(AddFestmeterActivity activity) {
-            this.activity = activity;
-
-        }
-
-        @Override
-        public void onFocusChange(View view, boolean hasFocus) {
-            activity.updateFestmeter();
-        }
-
-        @Override
-        public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-            if(actionId == IME_ACTION_DONE) {
-                activity.updateFestmeter();
-            }
-            return true;
-        }
     }
 }
